@@ -1,8 +1,8 @@
 import imaplib
 import os
-from model import EmailMessage
 from dotenv import load_dotenv
-from parseEmail import parse_email
+from email_reader.parseEmail import parse_email
+from email_reader.model import EmailMessage
 
 load_dotenv()
 

@@ -1,6 +1,6 @@
 import email
 from email.header import decode_header
-from model import EmailMessage
+from email_reader.model import EmailMessage
 
 def parse_email(raw_bytes: bytes, uid: int) -> EmailMessage:
     msg = email.message_from_bytes(raw_bytes)
