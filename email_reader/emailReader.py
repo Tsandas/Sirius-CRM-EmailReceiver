@@ -2,7 +2,7 @@ import imaplib
 import os
 from dotenv import load_dotenv
 
-from db.repository import find_last_email_in_db
+from db.repository import find_last_email_in_db, insert_emails_to_db
 from email_reader.parseEmail import parse_email
 from email_reader.model import EmailMessage
 
@@ -67,5 +67,6 @@ def get_last_uid_from_db() -> int:
 
 def fetch_and_push_new_emails():
     last_uid = get_last_uid_from_db()
-    ## insert to db
+    emails = fetch_new_emails(last_uid)
+    insert_emails_to_db(emails)
     return fetch_new_emails(last_uid)
