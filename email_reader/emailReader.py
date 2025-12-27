@@ -1,17 +1,13 @@
 import imaplib
 import os
-from dotenv import load_dotenv
 
 from db.repository import find_last_email_in_db, insert_emails_to_db
 from email_reader.parseEmail import parse_email
 from email_reader.model import EmailMessage
 
-load_dotenv()
-
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 IMAP_SERVER = "imap.gmail.com"
-
 
 def get_mailbox_max_uid(imap) -> int:
     status, data = imap.uid("search", None, "ALL")

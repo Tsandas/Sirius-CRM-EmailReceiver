@@ -4,15 +4,16 @@ from email_reader.model import EmailMessage
 def find_last_email_in_db():
     conn = get_conn()
     try:
-        with conn.cursor() as cur:
-            cur.execute("""
-                SELECT *
-                FROM emails
-                ORDER BY uid DESC
-                LIMIT 1
-            """)
-            row = cur.fetchone()
-            return row
+        row = conn.run(
+            """
+            SELECT *
+            FROM emails
+            ORDER BY uid DESC
+            LIMIT 1
+            """
+        )
+        print(row)
+        return row[0] if row else None
     finally:
         release_conn(conn)
 
@@ -22,8 +23,8 @@ def insert_emails_to_db(emails: list[EmailMessage]) -> None:
 
     conn = get_conn()
     try:
-        with conn.cursor() as cur:
-            cur.executemany(
+        for e in emails:
+            conn.run(
                 """
                 INSERT INTO emails (
                     uid,
@@ -33,20 +34,14 @@ def insert_emails_to_db(emails: list[EmailMessage]) -> None:
                     body,
                     received_at
                 )
-                VALUES (%s, %s, %s, %s, %s, %s)
+                VALUES (:uid, :message_id, :sender, :subject, :body, :received_at)
                 """,
-                [
-                    (
-                        e.uid,
-                        e.message_id,
-                        e.sender,
-                        e.subject,
-                        e.body,
-                        e.received_at
-                    )
-                    for e in emails
-                ]
+                uid=e.uid,
+                message_id=e.message_id,
+                sender=e.sender,
+                subject=e.subject,
+                body=e.body,
+                received_at=e.received_at
             )
-        conn.commit()
     finally:
         release_conn(conn)
